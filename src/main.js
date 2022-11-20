@@ -164,45 +164,45 @@ app.get("*", (req, res) => {
   res.send("Route not implemented");
 });
 //--------------------------------------------
-// LOCAL SERVER
-// conectDB(config.mongoDb.DATA_BASE_URL, (err) => {
-//   if (err) return console.log("Database connection error", err);
-//   console.log("Database connected");
+//LOCAL SERVER
+conectDB(config.mongoDb.DATA_BASE_URL, (err) => {
+  if (err) return console.log("Database connection error", err);
+  console.log("Database connected");
 
-//   if (cluster.isPrimary && config.server.MODE === "CLUSTER") {
-//     for (let i = 0; i < numCpu; i++) {
-//       cluster.fork();
-//     }
+  if (cluster.isPrimary && config.server.MODE === "CLUSTER") {
+    for (let i = 0; i < numCpu; i++) {
+      cluster.fork();
+    }
 
-//     cluster.on("exit", (worker, code, signal) => {
-//       console.log(`Work ${worker.process.pid} died`);
-//       cluster.fork();
-//     });
-//   } else {
-//     httpServer.listen(config.server.PORT, (err) => {
-//       if (err) return console.log(`Server error ${err}`);
-//       console.log(
-//         `Server http running on port ${config.server.PORT} - PID ${process.pid}`
-//       );
-//     });
-//   }
-// });
-
-// HEROKU
-if (cluster.isPrimary && config.server.MODE === "CLUSTER") {
-  for (let i = 0; i < numCpu; i++) {
-    cluster.fork();
+    cluster.on("exit", (worker, code, signal) => {
+      console.log(`Work ${worker.process.pid} died`);
+      cluster.fork();
+    });
+  } else {
+    httpServer.listen(config.server.PORT, (err) => {
+      if (err) return console.log(`Server error ${err}`);
+      console.log(
+        `Server http running on port ${config.server.PORT} - PID ${process.pid}`
+      );
+    });
   }
+});
 
-  cluster.on("exit", (worker, code, signal) => {
-    console.log(`Work ${worker.process.pid} died`);
-    cluster.fork();
-  });
-} else {
-  httpServer.listen(config.server.PORT, (err) => {
-    if (err) return console.log(`Server error ${err}`);
-    console.log(
-      `Server http running on port ${config.server.PORT} - PID ${process.pid}`
-    );
-  });
-}
+// // HEROKU
+// if (cluster.isPrimary && config.server.MODE === "CLUSTER") {
+//   for (let i = 0; i < numCpu; i++) {
+//     cluster.fork();
+//   }
+
+//   cluster.on("exit", (worker, code, signal) => {
+//     console.log(`Work ${worker.process.pid} died`);
+//     cluster.fork();
+//   });
+// } else {
+//   httpServer.listen(config.server.PORT, (err) => {
+//     if (err) return console.log(`Server error ${err}`);
+//     console.log(
+//       `Server http running on port ${config.server.PORT} - PID ${process.pid}`
+//     );
+//   });
+// }
