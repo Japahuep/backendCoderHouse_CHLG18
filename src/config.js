@@ -30,8 +30,8 @@ export default {
   },
   mongoDb: {
     EXPIRATION_TIME: parseInt(process.env.MONGODB_EXPIRATION_TIME),
-    DATA_BASE_URL: process.env.MONGODB_URI,
-    // "mongodb+srv://Japahuep:Yr2dQn6KFb2pRsL@dungeon.oo2bkhb.mongodb.net/sessionsChl13?retryWrites=true&w=majority",
+    // DATA_BASE_URL: process.env.MONGODB_URI,
+    DATA_BASE_URL: "mongodb+srv://Japahuep:Yr2dQn6KFb2pRsL@dungeon.oo2bkhb.mongodb.net/chlg18?retryWrites=true&w=majority",
     // DATA_BASE_URL: process.env.MONGODB_DATA_BASE_URL,
     ADVANCED_OPTIONS: { useNewUrlParser: true, useUnifiedTopology: true },
   },

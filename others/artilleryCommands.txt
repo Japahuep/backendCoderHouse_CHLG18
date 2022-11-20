@@ -7,10 +7,10 @@ Rename the *-v8.log file to console_result-v8.log
 
 CommandLine 01 (PowerShell)
 >> node --prof-process console_result-v8.log > console_result_prof_v8.txt
->> node ./src/main.js
+>> node ./src/main.js -m=fork
 
 CommandLine 02 (Git Bash)
->> artillery quick --count 50 -n 20 "http://localhost:8080/info" > console_result_info.txt
+>> artillery quick --count 50 -n 20 "http://localhost:8080/home" > console_result_info.txt
 
 CommandLine 01 (PowerShell)
 CTRL + C

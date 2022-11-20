@@ -18,16 +18,19 @@ import { Server as Socket } from "socket.io";
 import config from "./config.js";
 import { conectDB } from "./controllersdb.js";
 import { User } from "./models.js";
-conectDB(config.mongoDb.DATA_BASE_URL, console.log);
+conectDB(config.mongoDb.DATA_BASE_URL);
 
 import authWebRouter from "./routers/web/auth.js";
 import productsWebRouter from "./routers/web/home.js";
 import productsApiRouter from "./routers/api/products.js";
 // import randomApiRouter from "./routers/api/randoms.js";
 import infoWebRouter from "./routers/web/info.js";
+import userApiRouter from "./routers/api/user.js";
+import cartApiRouter from "./routers/api/cart.js";
 
 import addProductsHandlers from "./routers/ws/products.js";
 import addMessagesHandlers from "./routers/ws/messages.js";
+import addCartHandlers from "./routers/ws/cart.js";
 
 // Passport
 passport.use(
@@ -48,6 +51,11 @@ passport.use(
         const newUser = {
           username: username,
           password: createHash(password),
+          name: req.body.name,
+          address: req.body.address,
+          age: req.body.age,
+          phone: req.body.phone,
+          photo: req.body.photo,
         };
 
         User.create(newUser, (err, userWithId) => {
@@ -108,6 +116,7 @@ const io = new Socket(httpServer);
 io.on("connection", async (socket) => {
   addProductsHandlers(socket, io.sockets);
   addMessagesHandlers(socket, io.sockets);
+  addCartHandlers(socket, io.sockets);
 });
 
 //--------------------------------------------
@@ -148,49 +157,51 @@ app.use("", productsApiRouter);
 app.use("", authWebRouter);
 app.use("", productsWebRouter);
 app.use("", infoWebRouter);
+app.use("", userApiRouter);
+app.use("", cartApiRouter);
 app.get("*", (req, res) => {
   logger.warn("Route not implemented");
   res.send("Route not implemented");
 });
 //--------------------------------------------
 // inicio el servidor
-// conectDB(config.mongoDb.DATA_BASE_URL, (err) => {
-//   if (err) return console.log("Database connection error", err);
-//   console.log("Database connected");
+conectDB(config.mongoDb.DATA_BASE_URL, (err) => {
+  if (err) return console.log("Database connection error", err);
+  console.log("Database connected");
 
-//   if (cluster.isPrimary && config.server.MODE === "CLUSTER") {
-//     for (let i = 0; i < numCpu; i++) {
-//       cluster.fork();
-//     }
+  if (cluster.isPrimary && config.server.MODE === "CLUSTER") {
+    for (let i = 0; i < numCpu; i++) {
+      cluster.fork();
+    }
 
-//     cluster.on("exit", (worker, code, signal) => {
-//       console.log(`Work ${worker.process.pid} died`);
-//       cluster.fork();
-//     });
-//   } else {
-//     httpServer.listen(config.server.PORT, (err) => {
-//       if (err) return console.log(`Server error ${err}`);
-//       console.log(
-//         `Server http running on port ${config.server.PORT} - PID ${process.pid}`
-//       );
-//     });
-//   }
-// });
-
-if (cluster.isPrimary && config.server.MODE === "CLUSTER") {
-  for (let i = 0; i < numCpu; i++) {
-    cluster.fork();
+    cluster.on("exit", (worker, code, signal) => {
+      console.log(`Work ${worker.process.pid} died`);
+      cluster.fork();
+    });
+  } else {
+    httpServer.listen(config.server.PORT, (err) => {
+      if (err) return console.log(`Server error ${err}`);
+      console.log(
+        `Server http running on port ${config.server.PORT} - PID ${process.pid}`
+      );
+    });
   }
+});
 
-  cluster.on("exit", (worker, code, signal) => {
-    console.log(`Work ${worker.process.pid} died`);
-    cluster.fork();
-  });
-} else {
-  httpServer.listen(config.server.PORT, (err) => {
-    if (err) return console.log(`Server error ${err}`);
-    console.log(
-      `Server http running on port ${config.server.PORT} - PID ${process.pid}`
-    );
-  });
-}
+// if (cluster.isPrimary && config.server.MODE === "CLUSTER") {
+//   for (let i = 0; i < numCpu; i++) {
+//     cluster.fork();
+//   }
+
+//   cluster.on("exit", (worker, code, signal) => {
+//     console.log(`Work ${worker.process.pid} died`);
+//     cluster.fork();
+//   });
+// } else {
+//   httpServer.listen(config.server.PORT, (err) => {
+//     if (err) return console.log(`Server error ${err}`);
+//     console.log(
+//       `Server http running on port ${config.server.PORT} - PID ${process.pid}`
+//     );
+//   });
+// }

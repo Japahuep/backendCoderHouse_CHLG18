@@ -25,12 +25,16 @@
     <div class="container mt-3">
       <h1 class="alert alert-success">
         Welcome, <%= userName %>
+        <img width="50" src= "<%= thumbnail %>" alt="userPhoto">
+        </img>
         <button
-          class="btn btn-warning float-right mt-2"
-          onclick="location.href='/logout'"
+        class="btn btn-danger float-right mt-2"
+        onclick="location.href='/logout'"
         >
-          Unlog
-        </button>
+        Unlog
+      </button>
+      <img class="btn btn-warning float-right mt-2" width="50" src= "https://cdn-icons-png.flaticon.com/512/2038/2038854.png" alt="cart" onclick="goCart()">
+      </img>
       </h1>
     </div>
 
@@ -89,52 +93,14 @@
         </h1>
         <br />
 
-        <input
-          type="text"
-          id="inputUsername"
-          class="form-control w-50 my-2 mr-2"
-          placeholder="Enter email"
-        />
-        <input
-          type="text"
-          id="firstname"
-          class="form-control w-50 my-2 mr-2"
-          placeholder="Enter firstname"
-        />
-        <input
-          type="text"
-          id="lastname"
-          class="form-control w-50 my-2 mr-2"
-          placeholder="Enter lastname"
-        />
-        <input
-          type="text"
-          id="age"
-          class="form-control w-50 my-2 mr-2"
-          placeholder="Enter age"
-        />
-        <input
-          type="text"
-          id="alias"
-          class="form-control w-50 my-2 mr-2"
-          placeholder="Enter alias"
-        />
-        <input
-          type="text"
-          id="avatar"
-          class="form-control w-50 my-2 mr-2"
-          placeholder="Enter avatar (url)"
-        />
-        <hr />
-
         <hr />
 
         <div id="messages"></div>
 
         <form id="formPostMessage" class="form-inline" autocomplete="off">
           <div class="form-group">
+            <!-- disbale (inside the next input) -->
             <input
-              disabled
               id="inputMessage"
               type="text"
               class="form-control my-2 mr-2"
@@ -154,5 +120,14 @@
     </div>
 
     <script src="js/main.js"></script>
+    <script>
+      function redirect(page) {
+        location.href = page;
+      }
+      function goCart() {
+        console.log("goCart");
+        redirect("/cart");
+      }
+    </script>
   </body>
 </html>

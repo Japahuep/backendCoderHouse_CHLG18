@@ -1,4 +1,6 @@
 import { Router } from "express";
+import cart from "../../api/cart.js";
+import sendMail from "../../nodeMailer/nodeMailer.js";
 const authWebRouter = new Router();
 
 // Passport
@@ -18,7 +20,8 @@ authWebRouter.get("/", infoLogger, (req, res) => {
 // Login
 authWebRouter.get("/login", infoLogger, (req, res) => {
   if (req.isAuthenticated()) {
-    req.session.userName = req.user.username;
+    // req.session.userName = req.user.username;
+
     res.redirect("/home");
   } else {
     res.sendFile(path.join(__dirname + "/views/login.html"));
@@ -33,9 +36,11 @@ authWebRouter.post(
   ],
   (req, res) => {
     const user = req.user;
-    console.log(user);
-    req.session.userName = req.body.username;
-    sessionName = req.session.userName;
+    // console.log(user);
+    // req.session.userName = req.body.username;
+    // sessionName = req.session.userName;
+    sessionName = user.name;
+    req.session.user = user;
     res.redirect("/home");
   }
 );
@@ -60,11 +65,18 @@ authWebRouter.post(
   [
     infoLogger,
     passport.authenticate("signup", { failureRedirect: "/failsignup" }),
+    passport.authenticate("login", { failureRedirect: "/faillogin" }),
   ],
   (req, res) => {
     const user = req.user;
     console.log(user);
-    res.sendFile(path.join(__dirname + "/views/login.html"));
+    req.session.user = user;
+    const mail = sendMail("New registration", `${user}`);
+    console.log(mail);
+    // req.session.userName = req.body.username;
+    // sessionName = req.session.userName;
+    sessionName = user.name;
+    res.redirect("/home");
   }
 );
 
@@ -76,6 +88,7 @@ authWebRouter.get("/failsignup", infoLogger, (req, res) => {
 // Logout
 
 authWebRouter.get("/logout", infoLogger, (req, res) => {
+  cart.deleteAll();
   req.session.destroy((err) => {
     if (err) {
       res.json({ status: "Logout error", body: err });

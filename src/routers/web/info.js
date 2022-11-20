@@ -34,7 +34,7 @@ const info = {
 };
 
 infoWebRouter.get("/info", webAuth, (req, res) => {
-  // console.log(info);
+  console.log(info);
   res.render(path.join(__dirname + "/views/pages/info.ejs"), info);
 });
 

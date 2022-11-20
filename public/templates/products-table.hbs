@@ -13,12 +13,14 @@
             <th>Name</th>
             <th>Price</th>
             <th>Image</th>
+            <th>Add</th>
         </tr>
         {{#each products}}
         <tr>
             <td>{{this.title}}</td>
             <td>${{this.price}}</td>
             <td><img width="50" src={{this.thumbnail}} alt="not found"></td>
+            <td><button id = {{this.id}} type="submit" class="btn btn-success mt-3">Add</button></td>
         </tr>
         {{/each}}
     </table>

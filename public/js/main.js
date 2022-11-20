@@ -31,6 +31,28 @@ function makeHtmlTable(products) {
     });
 }
 
+let productTarget = document.getElementById("products");
+
+productTarget.onclick = (e) => {
+  let clickedElement = e.target;
+  if (parseInt(clickedElement.id)) {
+      fetch(`/api/products?id=${clickedElement.id}`)
+        .then((resp) => resp.json())
+        .then((product) => {
+          fetch("/api/cart", {
+            method: "PUT",
+            body: JSON.stringify(
+              product,
+            ),
+            headers: { "Content-type": "application/json; charset=UTF-8" },
+          })
+            .then((res) => {
+              res.json();
+            })
+        });
+  }
+};
+
 //-------------------------------------------------------------------------------------
 
 // MENSAJES
@@ -50,33 +72,35 @@ const schemaMessages = new schema.Entity("posts", {
 });
 /* ----------------------------------------------------------------------------- */
 
-const inputUsername = document.getElementById("inputUsername");
 const inputMessage = document.getElementById("inputMessage");
 const btnSend = document.getElementById("btnSend");
 
 const formPostMessage = document.getElementById("formPostMessage");
+
 formPostMessage.addEventListener("submit", (e) => {
   e.preventDefault();
 
   const date = new Date();
   const fyh = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
 
-  const message = {
-    author: {
-      email: inputUsername.value,
-      fName: document.getElementById("firstname").value,
-      lName: document.getElementById("lastname").value,
-      age: document.getElementById("age").value,
-      alias: document.getElementById("alias").value,
-      avatar: document.getElementById("avatar").value,
-    },
-    text: inputMessage.value,
-    fyh: fyh,
-  };
-
-  socket.emit("newMessage", message);
-  formPostMessage.reset();
-  inputMessage.focus();
+  fetch("/api/user")
+    .then((resp) => resp.json())
+    .then((userData) => {
+      console.log(userData);
+      const message = {
+        author: {
+          email: userData.username,
+          name: userData.name,
+          age: userData.age,
+          avatar: userData.photo,
+        },
+        text: inputMessage.value,
+        fyh: fyh,
+      };
+      socket.emit("newMessage", message);
+      formPostMessage.reset();
+      inputMessage.focus();
+    });
 });
 
 socket.on("messages", (normalizedMessages) => {
@@ -109,13 +133,6 @@ function makeHtmlList(messages) {
     })
     .join(" ");
 }
-
-inputUsername.addEventListener("input", () => {
-  const existEmail = inputUsername.value.length;
-  const existText = inputMessage.value.length;
-  inputMessage.disabled = !existEmail;
-  btnSend.disabled = !existEmail || !existText;
-});
 
 inputMessage.addEventListener("input", () => {
   const existText = inputMessage.value.length;
